@@ -1,0 +1,41 @@
+{
+  "name": "@stellarbuild/stellar-tx-builder",
+  "version": "0.2.0",
+  "description": "Fluent, type-safe TypeScript transaction builder for Stellar",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:integration": "jest --testPathPattern=integration",
+    "test:watch": "jest --watch",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "stellar",
+    "transaction",
+    "builder",
+    "typescript",
+    "soroban",
+    "xlm"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@stellar/stellar-sdk": ">=12"
+  },
+  "devDependencies": {
+    "@stellar/stellar-sdk": "^15.1.0",
+    "@types/jest": "^29.5.14",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.11",
+    "typescript": "^5.9.3"
+  }
+}
