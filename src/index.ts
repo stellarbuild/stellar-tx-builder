@@ -4,6 +4,7 @@ export type {
   PaymentParams,
   CreateAccountParams,
   ChangeTrustParams,
+  ManageOfferParams,
   TimeboundParams,
   BuiltTransaction,
   SubmitResult,

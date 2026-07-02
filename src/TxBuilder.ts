@@ -15,6 +15,7 @@ import type {
   PaymentParams,
   CreateAccountParams,
   ChangeTrustParams,
+  ManageOfferParams,
   TimeboundParams,
   BuiltTransaction,
   SubmitResult,
@@ -47,7 +48,7 @@ const NETWORK_PASSPHRASES: Record<string, NetworkPassphrase> = {
  * @returns Stellar Asset instance
  * @throws Error if custom asset code or issuer is invalid
  */
-function resolveAsset(asset: PaymentParams['asset']): Asset {
+function resolveAsset(asset: PaymentParams['asset'] | ManageOfferParams['selling'] | ManageOfferParams['buying']): Asset {
   if (asset === 'XLM') return Asset.native();
   
   if (!asset.code || typeof asset.code !== 'string') {
@@ -62,6 +63,33 @@ function resolveAsset(asset: PaymentParams['asset']): Asset {
   } catch (error) {
     throw new Error(`Invalid asset: code="${asset.code}", issuer="${asset.issuer}"`);
   }
+}
+
+/**
+ * Resolves a price parameter to a Stellar price object
+ * @param price - Either a string number or a fraction object with n (numerator) and d (denominator)
+ * @returns Price object with n and d properties
+ * @throws Error if price is invalid
+ */
+function resolvePrice(price: ManageOfferParams['price']): { n: number; d: number } {
+  if (typeof price === 'string') {
+    const n = parseFloat(price);
+    if (isNaN(n) || n <= 0) {
+      throw new Error(`Invalid price: "${price}" must be a positive number`);
+    }
+    // Convert decimal to fraction with denominator 1 for simplicity
+    // Stellar SDK will handle the conversion internally
+    return { n: Math.floor(n * 10000000), d: 10000000 };
+  }
+  
+  if (typeof price === 'object' && price.n !== undefined && price.d !== undefined) {
+    if (price.n <= 0 || price.d <= 0) {
+      throw new Error(`Invalid price fraction: numerator and denominator must be positive`);
+    }
+    return { n: price.n, d: price.d };
+  }
+  
+  throw new Error(`Invalid price format: must be a string or {n, d} object`);
 }
 
 /**
@@ -257,6 +285,31 @@ export class TxBuilder {
       Operation.changeTrust({
         asset,
         ...(params.limit !== undefined ? { limit: params.limit } : {}),
+      })
+    );
+    return this;
+  }
+
+  /**
+   * Adds a manage sell offer operation to the transaction
+   * @param params - Manage offer parameters including selling/buying assets, amount, price, and optional offer ID
+   * @returns This instance for chaining
+   * @throws Error if parameters are invalid
+   */
+  addManageOffer(params: ManageOfferParams): this {
+    validateAmount(params.amount, 'offer amount');
+    
+    const selling = resolveAsset(params.selling);
+    const buying = resolveAsset(params.buying);
+    const price = resolvePrice(params.price);
+    
+    this.operations.push(
+      Operation.manageSellOffer({
+        selling,
+        buying,
+        amount: params.amount,
+        price,
+        offerId: params.offerId || '0',
       })
     );
     return this;

@@ -42,6 +42,17 @@ export interface ChangeTrustParams {
 }
 
 /**
+ * Parameters for managing a sell offer
+ */
+export interface ManageOfferParams {
+  selling: { code: string; issuer: string } | 'XLM';
+  buying: { code: string; issuer: string } | 'XLM';
+  amount: string;
+  price: string | { n: number; d: number };
+  offerId?: string; // defaults to 0 (new offer)
+}
+
+/**
  * Parameters for setting transaction timebounds
  */
 export interface TimeboundParams {

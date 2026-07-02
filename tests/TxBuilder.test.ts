@@ -143,6 +143,121 @@ describe('addChangeTrust()', () => {
   });
 });
 
+describe('addManageOffer()', () => {
+  it('chains correctly with XLM to custom asset', () => {
+    const b = builder();
+    expect(
+      b.addManageOffer({
+        selling: 'XLM',
+        buying: { code: 'USDC', issuer: DEST },
+        amount: '100',
+        price: '0.5',
+      })
+    ).toBe(b);
+  });
+
+  it('chains correctly with custom asset to XLM', () => {
+    const b = builder();
+    expect(
+      b.addManageOffer({
+        selling: { code: 'USDC', issuer: DEST },
+        buying: 'XLM',
+        amount: '50',
+        price: '2.0',
+      })
+    ).toBe(b);
+  });
+
+  it('accepts price as fraction object', () => {
+    expect(() =>
+      builder().addManageOffer({
+        selling: 'XLM',
+        buying: { code: 'USDC', issuer: DEST },
+        amount: '100',
+        price: { n: 1, d: 2 },
+      })
+    ).not.toThrow();
+  });
+
+  it('accepts optional offerId', () => {
+    expect(() =>
+      builder().addManageOffer({
+        selling: 'XLM',
+        buying: { code: 'USDC', issuer: DEST },
+        amount: '100',
+        price: '0.5',
+        offerId: '12345',
+      })
+    ).not.toThrow();
+  });
+
+  it('throws on invalid amount', () => {
+    expect(() =>
+      builder().addManageOffer({
+        selling: 'XLM',
+        buying: { code: 'USDC', issuer: DEST },
+        amount: '0',
+        price: '0.5',
+      })
+    ).toThrow('must be greater than 0');
+  });
+
+  it('throws on invalid price string', () => {
+    expect(() =>
+      builder().addManageOffer({
+        selling: 'XLM',
+        buying: { code: 'USDC', issuer: DEST },
+        amount: '100',
+        price: 'not-a-number',
+      })
+    ).toThrow('Invalid price');
+  });
+
+  it('throws on negative price', () => {
+    expect(() =>
+      builder().addManageOffer({
+        selling: 'XLM',
+        buying: { code: 'USDC', issuer: DEST },
+        amount: '100',
+        price: '-1.5',
+      })
+    ).toThrow('must be a positive number');
+  });
+
+  it('throws on invalid price fraction', () => {
+    expect(() =>
+      builder().addManageOffer({
+        selling: 'XLM',
+        buying: { code: 'USDC', issuer: DEST },
+        amount: '100',
+        price: { n: -1, d: 2 },
+      })
+    ).toThrow('numerator and denominator must be positive');
+  });
+
+  it('throws on empty selling asset code', () => {
+    expect(() =>
+      builder().addManageOffer({
+        selling: { code: '', issuer: DEST },
+        buying: 'XLM',
+        amount: '100',
+        price: '0.5',
+      })
+    ).toThrow('Asset code must be a non-empty string');
+  });
+
+  it('throws on empty buying asset code', () => {
+    expect(() =>
+      builder().addManageOffer({
+        selling: 'XLM',
+        buying: { code: '', issuer: DEST },
+        amount: '100',
+        price: '0.5',
+      })
+    ).toThrow('Asset code must be a non-empty string');
+  });
+});
+
 describe('setMemo()', () => {
   it('chains correctly', () => {
     const b = builder();
