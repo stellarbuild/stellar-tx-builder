@@ -18,6 +18,7 @@ import type {
   ManageOfferParams,
   ManageBuyOfferParams,
   PathPaymentParams,
+  SetOptionsParams,
   TimeboundParams,
   BuiltTransaction,
   SubmitResult,
@@ -367,6 +368,102 @@ export class TxBuilder {
         path,
       })
     );
+    return this;
+  }
+
+  /**
+   * Adds a set options operation to the transaction
+   * @param params - Set options parameters for account configuration
+   * @returns This instance for chaining
+   * @throws Error if parameters are invalid
+   */
+  addSetOptions(params: SetOptionsParams): this {
+    const operationParams: Record<string, unknown> = {};
+    
+    if (params.inflationDest !== undefined) {
+      validateAddress(params.inflationDest, 'inflation destination');
+      operationParams.inflationDest = params.inflationDest;
+    }
+    
+    if (params.clearFlags !== undefined) {
+      operationParams.clearFlags = params.clearFlags;
+    }
+    
+    if (params.setFlags !== undefined) {
+      operationParams.setFlags = params.setFlags;
+    }
+    
+    if (params.masterWeight !== undefined) {
+      if (params.masterWeight < 0 || params.masterWeight > 255) {
+        throw new Error('Master weight must be between 0 and 255');
+      }
+      operationParams.masterWeight = params.masterWeight;
+    }
+    
+    if (params.lowThreshold !== undefined) {
+      if (params.lowThreshold < 0 || params.lowThreshold > 255) {
+        throw new Error('Low threshold must be between 0 and 255');
+      }
+      operationParams.lowThreshold = params.lowThreshold;
+    }
+    
+    if (params.medThreshold !== undefined) {
+      if (params.medThreshold < 0 || params.medThreshold > 255) {
+        throw new Error('Medium threshold must be between 0 and 255');
+      }
+      operationParams.medThreshold = params.medThreshold;
+    }
+    
+    if (params.highThreshold !== undefined) {
+      if (params.highThreshold < 0 || params.highThreshold > 255) {
+        throw new Error('High threshold must be between 0 and 255');
+      }
+      operationParams.highThreshold = params.highThreshold;
+    }
+    
+    if (params.homeDomain !== undefined) {
+      if (params.homeDomain.length > 32) {
+        throw new Error('Home domain must be 32 characters or fewer');
+      }
+      operationParams.homeDomain = params.homeDomain;
+    }
+    
+    if (params.signer !== undefined) {
+      if (params.signer.weight < 0 || params.signer.weight > 255) {
+        throw new Error('Signer weight must be between 0 and 255');
+      }
+      
+      const signer: Record<string, unknown> = { weight: params.signer.weight };
+      
+      if (params.signer.ed25519PublicKey) {
+        validateAddress(params.signer.ed25519PublicKey, 'signer public key');
+        signer.ed25519PublicKey = params.signer.ed25519PublicKey;
+      } else if (params.signer.sha256Hash) {
+        if (typeof params.signer.sha256Hash === 'string') {
+          if (params.signer.sha256Hash.length !== 64) {
+            throw new Error('SHA256 hash must be 64 hex characters (32 bytes)');
+          }
+          signer.sha256Hash = Buffer.from(params.signer.sha256Hash, 'hex');
+        } else {
+          signer.sha256Hash = params.signer.sha256Hash;
+        }
+      } else if (params.signer.preAuthTx) {
+        if (typeof params.signer.preAuthTx === 'string') {
+          if (params.signer.preAuthTx.length !== 64) {
+            throw new Error('PreAuthTx must be 64 hex characters (32 bytes)');
+          }
+          signer.preAuthTx = Buffer.from(params.signer.preAuthTx, 'hex');
+        } else {
+          signer.preAuthTx = params.signer.preAuthTx;
+        }
+      } else {
+        throw new Error('Signer must specify one of: ed25519PublicKey, sha256Hash, or preAuthTx');
+      }
+      
+      operationParams.signer = signer;
+    }
+    
+    this.operations.push(Operation.setOptions(operationParams));
     return this;
   }
 

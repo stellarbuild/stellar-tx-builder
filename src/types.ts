@@ -76,6 +76,26 @@ export interface PathPaymentParams {
 }
 
 /**
+ * Parameters for setting account options
+ */
+export interface SetOptionsParams {
+  inflationDest?: string;
+  clearFlags?: number;
+  setFlags?: number;
+  masterWeight?: number;
+  lowThreshold?: number;
+  medThreshold?: number;
+  highThreshold?: number;
+  homeDomain?: string;
+  signer?: {
+    ed25519PublicKey?: string;
+    sha256Hash?: string;
+    preAuthTx?: string;
+    weight: number;
+  };
+}
+
+/**
  * Parameters for setting transaction timebounds
  */
 export interface TimeboundParams {

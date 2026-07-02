@@ -500,6 +500,105 @@ describe('addPathPayment()', () => {
   });
 });
 
+describe('addSetOptions()', () => {
+  it('chains correctly with inflation destination', () => {
+    const b = builder();
+    expect(b.addSetOptions({ inflationDest: DEST })).toBe(b);
+  });
+
+  it('chains correctly with clear flags', () => {
+    const b = builder();
+    expect(b.addSetOptions({ clearFlags: 1 })).toBe(b);
+  });
+
+  it('chains correctly with set flags', () => {
+    const b = builder();
+    expect(b.addSetOptions({ setFlags: 1 })).toBe(b);
+  });
+
+  it('chains correctly with master weight', () => {
+    const b = builder();
+    expect(b.addSetOptions({ masterWeight: 100 })).toBe(b);
+  });
+
+  it('chains correctly with thresholds', () => {
+    const b = builder();
+    expect(b.addSetOptions({ lowThreshold: 1, medThreshold: 2, highThreshold: 3 })).toBe(b);
+  });
+
+  it('chains correctly with home domain', () => {
+    const b = builder();
+    expect(b.addSetOptions({ homeDomain: 'example.com' })).toBe(b);
+  });
+
+  it('chains correctly with ed25519 signer', () => {
+    const b = builder();
+    expect(
+      b.addSetOptions({
+        signer: { ed25519PublicKey: DEST, weight: 1 },
+      })
+    ).toBe(b);
+  });
+
+  it('chains correctly with sha256 signer', () => {
+    const b = builder();
+    expect(
+      b.addSetOptions({
+        signer: { sha256Hash: 'a'.repeat(64), weight: 1 },
+      })
+    ).toBe(b);
+  });
+
+  it('chains correctly with preAuthTx signer', () => {
+    const b = builder();
+    expect(
+      b.addSetOptions({
+        signer: { preAuthTx: 'b'.repeat(64), weight: 1 },
+      })
+    ).toBe(b);
+  });
+
+  it('throws on invalid inflation destination', () => {
+    expect(() => builder().addSetOptions({ inflationDest: 'not-an-address' })).toThrow('Invalid Stellar address');
+  });
+
+  it('throws on master weight out of range', () => {
+    expect(() => builder().addSetOptions({ masterWeight: 256 })).toThrow('must be between 0 and 255');
+  });
+
+  it('throws on low threshold out of range', () => {
+    expect(() => builder().addSetOptions({ lowThreshold: -1 })).toThrow('must be between 0 and 255');
+  });
+
+  it('throws on home domain too long', () => {
+    expect(() => builder().addSetOptions({ homeDomain: 'a'.repeat(33) })).toThrow('32 characters or fewer');
+  });
+
+  it('throws on signer weight out of range', () => {
+    expect(() =>
+      builder().addSetOptions({
+        signer: { ed25519PublicKey: DEST, weight: 256 },
+      })
+    ).toThrow('must be between 0 and 255');
+  });
+
+  it('throws on signer without type', () => {
+    expect(() =>
+      builder().addSetOptions({
+        signer: { weight: 1 } as any,
+      })
+    ).toThrow('must specify one of');
+  });
+
+  it('throws on invalid signer public key', () => {
+    expect(() =>
+      builder().addSetOptions({
+        signer: { ed25519PublicKey: 'not-an-address', weight: 1 },
+      })
+    ).toThrow('Invalid Stellar address');
+  });
+});
+
 describe('setMemo()', () => {
   it('chains correctly', () => {
     const b = builder();

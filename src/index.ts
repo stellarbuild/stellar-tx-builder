@@ -7,6 +7,7 @@ export type {
   ManageOfferParams,
   ManageBuyOfferParams,
   PathPaymentParams,
+  SetOptionsParams,
   TimeboundParams,
   BuiltTransaction,
   SubmitResult,
