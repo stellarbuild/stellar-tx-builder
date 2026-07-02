@@ -33,4 +33,4 @@ jobs:
         run: npm run build
 
       - name: Unit tests
-        run: npm test -- --coverage --testPathIgnorePatterns=integration
+        run: npm test
