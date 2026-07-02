@@ -205,8 +205,8 @@ Invalid inputs throw descriptive errors immediately so you catch problems in dev
 | `.addPathPayment(params)` | `pathPaymentStrictSend` | ✅ Implemented |
 | `.addSetOptions(params)` | `setOptions` | ✅ Implemented |
 | `.addManageData(params)` | `manageData` | ✅ Implemented |
-| `.invokeContract(params)` | `invokeHostFunction` (Soroban) | 🔜 Planned |
-| `.wrapInFeeBump(feeSource)` | Fee bump transaction | 🔜 Planned |
+| `.invokeContract(params)` | `invokeHostFunction` (Soroban) | ⚠️ Placeholder |
+| `.wrapInFeeBump(feeSource)` | Fee bump transaction | ⚠️ Placeholder |
 
 Want to implement one of these? See [Contributing](#contributing).
 
