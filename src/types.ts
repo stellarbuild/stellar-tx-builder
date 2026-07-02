@@ -64,6 +64,18 @@ export interface ManageBuyOfferParams {
 }
 
 /**
+ * Parameters for a path payment strict send operation
+ */
+export interface PathPaymentParams {
+  destination: string;
+  sendAsset: { code: string; issuer: string } | 'XLM';
+  sendAmount: string;
+  destAsset: { code: string; issuer: string } | 'XLM';
+  destAmount: string;
+  path?: ({ code: string; issuer: string } | 'XLM')[];
+}
+
+/**
  * Parameters for setting transaction timebounds
  */
 export interface TimeboundParams {

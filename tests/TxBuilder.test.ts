@@ -373,6 +373,133 @@ describe('addManageBuyOffer()', () => {
   });
 });
 
+describe('addPathPayment()', () => {
+  it('chains correctly with XLM to custom asset', () => {
+    const b = builder();
+    expect(
+      b.addPathPayment({
+        destination: DEST,
+        sendAsset: 'XLM',
+        sendAmount: '100',
+        destAsset: { code: 'USDC', issuer: DEST },
+        destAmount: '50',
+      })
+    ).toBe(b);
+  });
+
+  it('chains correctly with custom asset to XLM', () => {
+    const b = builder();
+    expect(
+      b.addPathPayment({
+        destination: DEST,
+        sendAsset: { code: 'USDC', issuer: DEST },
+        sendAmount: '50',
+        destAsset: 'XLM',
+        destAmount: '100',
+      })
+    ).toBe(b);
+  });
+
+  it('accepts optional path array', () => {
+    expect(() =>
+      builder().addPathPayment({
+        destination: DEST,
+        sendAsset: 'XLM',
+        sendAmount: '100',
+        destAsset: { code: 'USDC', issuer: DEST },
+        destAmount: '50',
+        path: [{ code: 'EUR', issuer: DEST }],
+      })
+    ).not.toThrow();
+  });
+
+  it('accepts empty path array', () => {
+    expect(() =>
+      builder().addPathPayment({
+        destination: DEST,
+        sendAsset: 'XLM',
+        sendAmount: '100',
+        destAsset: { code: 'USDC', issuer: DEST },
+        destAmount: '50',
+        path: [],
+      })
+    ).not.toThrow();
+  });
+
+  it('throws on invalid destination address', () => {
+    expect(() =>
+      builder().addPathPayment({
+        destination: 'not-an-address',
+        sendAsset: 'XLM',
+        sendAmount: '100',
+        destAsset: { code: 'USDC', issuer: DEST },
+        destAmount: '50',
+      })
+    ).toThrow('Invalid Stellar address');
+  });
+
+  it('throws on invalid send amount', () => {
+    expect(() =>
+      builder().addPathPayment({
+        destination: DEST,
+        sendAsset: 'XLM',
+        sendAmount: '0',
+        destAsset: { code: 'USDC', issuer: DEST },
+        destAmount: '50',
+      })
+    ).toThrow('must be greater than 0');
+  });
+
+  it('throws on invalid destination amount', () => {
+    expect(() =>
+      builder().addPathPayment({
+        destination: DEST,
+        sendAsset: 'XLM',
+        sendAmount: '100',
+        destAsset: { code: 'USDC', issuer: DEST },
+        destAmount: '0',
+      })
+    ).toThrow('must be greater than 0');
+  });
+
+  it('throws on empty send asset code', () => {
+    expect(() =>
+      builder().addPathPayment({
+        destination: DEST,
+        sendAsset: { code: '', issuer: DEST },
+        sendAmount: '100',
+        destAsset: { code: 'USDC', issuer: DEST },
+        destAmount: '50',
+      })
+    ).toThrow('Asset code must be a non-empty string');
+  });
+
+  it('throws on empty dest asset code', () => {
+    expect(() =>
+      builder().addPathPayment({
+        destination: DEST,
+        sendAsset: 'XLM',
+        sendAmount: '100',
+        destAsset: { code: '', issuer: DEST },
+        destAmount: '50',
+      })
+    ).toThrow('Asset code must be a non-empty string');
+  });
+
+  it('throws on invalid path asset code', () => {
+    expect(() =>
+      builder().addPathPayment({
+        destination: DEST,
+        sendAsset: 'XLM',
+        sendAmount: '100',
+        destAsset: { code: 'USDC', issuer: DEST },
+        destAmount: '50',
+        path: [{ code: '', issuer: DEST }],
+      })
+    ).toThrow('Asset code must be a non-empty string');
+  });
+});
+
 describe('setMemo()', () => {
   it('chains correctly', () => {
     const b = builder();

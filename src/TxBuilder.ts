@@ -17,6 +17,7 @@ import type {
   ChangeTrustParams,
   ManageOfferParams,
   ManageBuyOfferParams,
+  PathPaymentParams,
   TimeboundParams,
   BuiltTransaction,
   SubmitResult,
@@ -49,7 +50,7 @@ const NETWORK_PASSPHRASES: Record<string, NetworkPassphrase> = {
  * @returns Stellar Asset instance
  * @throws Error if custom asset code or issuer is invalid
  */
-function resolveAsset(asset: PaymentParams['asset'] | ManageOfferParams['selling'] | ManageOfferParams['buying'] | ManageBuyOfferParams['selling'] | ManageBuyOfferParams['buying']): Asset {
+function resolveAsset(asset: 'XLM' | { code: string; issuer: string }): Asset {
   if (asset === 'XLM') return Asset.native();
   
   if (!asset.code || typeof asset.code !== 'string') {
@@ -336,6 +337,34 @@ export class TxBuilder {
         buyAmount: params.amount,
         price,
         offerId: params.offerId || '0',
+      })
+    );
+    return this;
+  }
+
+  /**
+   * Adds a path payment strict send operation to the transaction
+   * @param params - Path payment parameters including destination, send/dest assets and amounts, and optional path
+   * @returns This instance for chaining
+   * @throws Error if parameters are invalid
+   */
+  addPathPayment(params: PathPaymentParams): this {
+    validateAddress(params.destination, 'destination');
+    validateAmount(params.sendAmount, 'send amount');
+    validateAmount(params.destAmount, 'destination amount');
+    
+    const sendAsset = resolveAsset(params.sendAsset);
+    const destAsset = resolveAsset(params.destAsset);
+    const path = params.path ? params.path.map(resolveAsset) : [];
+    
+    this.operations.push(
+      Operation.pathPaymentStrictSend({
+        destination: params.destination,
+        sendAsset,
+        sendAmount: params.sendAmount,
+        destAsset,
+        destMin: params.destAmount,
+        path,
       })
     );
     return this;

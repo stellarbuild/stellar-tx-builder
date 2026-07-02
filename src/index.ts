@@ -6,6 +6,7 @@ export type {
   ChangeTrustParams,
   ManageOfferParams,
   ManageBuyOfferParams,
+  PathPaymentParams,
   TimeboundParams,
   BuiltTransaction,
   SubmitResult,
