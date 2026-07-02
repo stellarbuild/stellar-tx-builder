@@ -200,11 +200,11 @@ Invalid inputs throw descriptive errors immediately so you catch problems in dev
 | `.addPayment(params)` | `payment` | ✅ Implemented |
 | `.addCreateAccount(params)` | `createAccount` | ✅ Implemented |
 | `.addChangeTrust(params)` | `changeTrust` | ✅ Implemented |
-| `.addManageOffer(params)` | `manageSellOffer` | 🔜 Planned |
-| `.addManageBuyOffer(params)` | `manageBuyOffer` | 🔜 Planned |
-| `.addPathPayment(params)` | `pathPaymentStrictSend` | 🔜 Planned |
-| `.addSetOptions(params)` | `setOptions` | 🔜 Planned |
-| `.addManageData(params)` | `manageData` | 🔜 Planned |
+| `.addManageOffer(params)` | `manageSellOffer` | ✅ Implemented |
+| `.addManageBuyOffer(params)` | `manageBuyOffer` | ✅ Implemented |
+| `.addPathPayment(params)` | `pathPaymentStrictSend` | ✅ Implemented |
+| `.addSetOptions(params)` | `setOptions` | ✅ Implemented |
+| `.addManageData(params)` | `manageData` | ✅ Implemented |
 | `.invokeContract(params)` | `invokeHostFunction` (Soroban) | 🔜 Planned |
 | `.wrapInFeeBump(feeSource)` | Fee bump transaction | 🔜 Planned |
 
