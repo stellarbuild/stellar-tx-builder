@@ -16,6 +16,7 @@ import type {
   CreateAccountParams,
   ChangeTrustParams,
   ManageOfferParams,
+  ManageBuyOfferParams,
   TimeboundParams,
   BuiltTransaction,
   SubmitResult,
@@ -48,7 +49,7 @@ const NETWORK_PASSPHRASES: Record<string, NetworkPassphrase> = {
  * @returns Stellar Asset instance
  * @throws Error if custom asset code or issuer is invalid
  */
-function resolveAsset(asset: PaymentParams['asset'] | ManageOfferParams['selling'] | ManageOfferParams['buying']): Asset {
+function resolveAsset(asset: PaymentParams['asset'] | ManageOfferParams['selling'] | ManageOfferParams['buying'] | ManageBuyOfferParams['selling'] | ManageBuyOfferParams['buying']): Asset {
   if (asset === 'XLM') return Asset.native();
   
   if (!asset.code || typeof asset.code !== 'string') {
@@ -71,7 +72,7 @@ function resolveAsset(asset: PaymentParams['asset'] | ManageOfferParams['selling
  * @returns Price object with n and d properties
  * @throws Error if price is invalid
  */
-function resolvePrice(price: ManageOfferParams['price']): { n: number; d: number } {
+function resolvePrice(price: ManageOfferParams['price'] | ManageBuyOfferParams['price']): { n: number; d: number } {
   if (typeof price === 'string') {
     const n = parseFloat(price);
     if (isNaN(n) || n <= 0) {
@@ -308,6 +309,31 @@ export class TxBuilder {
         selling,
         buying,
         amount: params.amount,
+        price,
+        offerId: params.offerId || '0',
+      })
+    );
+    return this;
+  }
+
+  /**
+   * Adds a manage buy offer operation to the transaction
+   * @param params - Manage buy offer parameters including selling/buying assets, amount, price, and optional offer ID
+   * @returns This instance for chaining
+   * @throws Error if parameters are invalid
+   */
+  addManageBuyOffer(params: ManageBuyOfferParams): this {
+    validateAmount(params.amount, 'buy offer amount');
+    
+    const selling = resolveAsset(params.selling);
+    const buying = resolveAsset(params.buying);
+    const price = resolvePrice(params.price);
+    
+    this.operations.push(
+      Operation.manageBuyOffer({
+        selling,
+        buying,
+        buyAmount: params.amount,
         price,
         offerId: params.offerId || '0',
       })
