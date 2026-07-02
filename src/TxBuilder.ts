@@ -19,6 +19,7 @@ import type {
   ManageBuyOfferParams,
   PathPaymentParams,
   SetOptionsParams,
+  ManageDataParams,
   TimeboundParams,
   BuiltTransaction,
   SubmitResult,
@@ -464,6 +465,42 @@ export class TxBuilder {
     }
     
     this.operations.push(Operation.setOptions(operationParams));
+    return this;
+  }
+
+  /**
+   * Adds a manage data operation to the transaction
+   * @param params - Manage data parameters including name and value
+   * @returns This instance for chaining
+   * @throws Error if parameters are invalid
+   */
+  addManageData(params: ManageDataParams): this {
+    if (!params.name || typeof params.name !== 'string') {
+      throw new Error('Data name must be a non-empty string');
+    }
+    
+    const nameBytes = Buffer.byteLength(params.name, 'utf8');
+    if (nameBytes > 64) {
+      throw new Error(`Data name exceeds 64-byte limit (${nameBytes} bytes)`);
+    }
+    
+    if (params.value !== undefined && params.value !== null) {
+      if (typeof params.value !== 'string') {
+        throw new Error('Data value must be a string');
+      }
+      
+      const valueBytes = Buffer.byteLength(params.value, 'utf8');
+      if (valueBytes > 64) {
+        throw new Error(`Data value exceeds 64-byte limit (${valueBytes} bytes)`);
+      }
+    }
+    
+    this.operations.push(
+      Operation.manageData({
+        name: params.name,
+        value: params.value,
+      })
+    );
     return this;
   }
 

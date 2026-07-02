@@ -96,6 +96,14 @@ export interface SetOptionsParams {
 }
 
 /**
+ * Parameters for managing account data
+ */
+export interface ManageDataParams {
+  name: string;
+  value: string;
+}
+
+/**
  * Parameters for setting transaction timebounds
  */
 export interface TimeboundParams {

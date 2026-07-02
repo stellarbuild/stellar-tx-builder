@@ -599,6 +599,42 @@ describe('addSetOptions()', () => {
   });
 });
 
+describe('addManageData()', () => {
+  it('chains correctly with name and value', () => {
+    const b = builder();
+    expect(b.addManageData({ name: 'key', value: 'value' })).toBe(b);
+  });
+
+  it('chains correctly with name only (deletes data)', () => {
+    const b = builder();
+    expect(b.addManageData({ name: 'key', value: '' })).toBe(b);
+  });
+
+  it('accepts name at 64-byte limit', () => {
+    expect(() => builder().addManageData({ name: 'a'.repeat(64), value: 'value' })).not.toThrow();
+  });
+
+  it('accepts value at 64-byte limit', () => {
+    expect(() => builder().addManageData({ name: 'key', value: 'b'.repeat(64) })).not.toThrow();
+  });
+
+  it('throws on empty name', () => {
+    expect(() => builder().addManageData({ name: '', value: 'value' })).toThrow('must be a non-empty string');
+  });
+
+  it('throws on name exceeding 64 bytes', () => {
+    expect(() => builder().addManageData({ name: 'a'.repeat(65), value: 'value' })).toThrow('exceeds 64-byte limit');
+  });
+
+  it('throws on value exceeding 64 bytes', () => {
+    expect(() => builder().addManageData({ name: 'key', value: 'b'.repeat(65) })).toThrow('exceeds 64-byte limit');
+  });
+
+  it('throws on non-string value', () => {
+    expect(() => builder().addManageData({ name: 'key', value: 123 as any })).toThrow('must be a string');
+  });
+});
+
 describe('setMemo()', () => {
   it('chains correctly', () => {
     const b = builder();
