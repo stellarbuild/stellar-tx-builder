@@ -104,6 +104,15 @@ export interface ManageDataParams {
 }
 
 /**
+ * Parameters for invoking a Soroban smart contract
+ */
+export interface InvokeContractParams {
+  contractId: string;
+  functionName: string;
+  args?: (string | number | boolean | { address: string } | { amount: string; asset: { code: string; issuer: string } | 'XLM' })[];
+}
+
+/**
  * Parameters for setting transaction timebounds
  */
 export interface TimeboundParams {

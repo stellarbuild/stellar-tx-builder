@@ -635,6 +635,44 @@ describe('addManageData()', () => {
   });
 });
 
+describe('invokeContract()', () => {
+  it('validates contract ID format then throws not implemented', () => {
+    expect(() =>
+      builder().invokeContract({
+        contractId: DEST,
+        functionName: 'hello',
+      })
+    ).toThrow('not yet fully implemented');
+  });
+
+  it('throws on empty contract ID', () => {
+    expect(() =>
+      builder().invokeContract({
+        contractId: '',
+        functionName: 'hello',
+      })
+    ).toThrow('must be a non-empty string');
+  });
+
+  it('throws on empty function name', () => {
+    expect(() =>
+      builder().invokeContract({
+        contractId: DEST,
+        functionName: '',
+      })
+    ).toThrow('must be a non-empty string');
+  });
+
+  it('throws on invalid contract ID format', () => {
+    expect(() =>
+      builder().invokeContract({
+        contractId: 'not-an-address',
+        functionName: 'hello',
+      })
+    ).toThrow('Invalid contract ID format');
+  });
+});
+
 describe('setMemo()', () => {
   it('chains correctly', () => {
     const b = builder();

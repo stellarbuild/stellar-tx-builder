@@ -9,6 +9,7 @@ export type {
   PathPaymentParams,
   SetOptionsParams,
   ManageDataParams,
+  InvokeContractParams,
   TimeboundParams,
   BuiltTransaction,
   SubmitResult,

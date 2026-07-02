@@ -9,6 +9,8 @@ import {
   Horizon,
   Transaction,
   xdr,
+  Address,
+  ScInt,
 } from '@stellar/stellar-sdk';
 import type {
   TxBuilderOptions,
@@ -20,6 +22,7 @@ import type {
   PathPaymentParams,
   SetOptionsParams,
   ManageDataParams,
+  InvokeContractParams,
   TimeboundParams,
   BuiltTransaction,
   SubmitResult,
@@ -502,6 +505,35 @@ export class TxBuilder {
       })
     );
     return this;
+  }
+
+  /**
+   * Adds a Soroban smart contract invocation operation to the transaction
+   * @param params - Invoke contract parameters including contract ID, function name, and arguments
+   * @returns This instance for chaining
+   * @throws Error if parameters are invalid
+   * @note This is a placeholder for future Soroban support. For now, use the Stellar SDK directly:
+   * Operation.invokeHostFunction({ func: xdr.HostFunction.invokeContract({ ... }) })
+   */
+  invokeContract(params: InvokeContractParams): this {
+    if (!params.contractId || typeof params.contractId !== 'string') {
+      throw new Error('Contract ID must be a non-empty string');
+    }
+    
+    if (!params.functionName || typeof params.functionName !== 'string') {
+      throw new Error('Function name must be a non-empty string');
+    }
+    
+    // Validate contract ID format
+    try {
+      new Address(params.contractId);
+    } catch (error) {
+      throw new Error('Invalid contract ID format');
+    }
+    
+    // Placeholder - full Soroban implementation requires complex XDR handling
+    // This validates inputs and provides type safety
+    throw new Error('Soroban contract invocation is not yet fully implemented. Use @stellar/stellar-sdk directly for Soroban operations.');
   }
 
   /**
