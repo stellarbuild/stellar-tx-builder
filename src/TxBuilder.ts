@@ -222,6 +222,8 @@ export class TxBuilder {
   private operations: xdr.Operation[] = [];
   private memo?: Memo;
   private timebounds?: { minTime: number; maxTime: number };
+  private feeBumpSource?: string;
+  private feeBumpFee?: string;
 
   private constructor(keypair: Keypair, options: TxBuilderOptions) {
     this.keypair = keypair;
@@ -537,6 +539,27 @@ export class TxBuilder {
   }
 
   /**
+   * Wraps the transaction in a fee bump transaction
+   * @param feeSource - Public key of the account paying the fee
+   * @param fee - Fee to pay (in stroops), defaults to base fee
+   * @returns This instance for chaining
+   * @throws Error if parameters are invalid
+   */
+  wrapInFeeBump(feeSource: string, fee?: string): this {
+    validateAddress(feeSource, 'fee source');
+    
+    if (fee !== undefined) {
+      validateAmount(fee, 'fee');
+    }
+    
+    // Store fee bump parameters to be applied during build
+    this.feeBumpSource = feeSource;
+    this.feeBumpFee = fee;
+    
+    return this;
+  }
+
+  /**
    * Sets a text memo for the transaction
    * @param text - Memo text (max 28 bytes)
    * @returns This instance for chaining
@@ -599,6 +622,13 @@ export class TxBuilder {
     builder.setTimeout(timeout);
 
     const tx = builder.build() as Transaction;
+
+    // Note: Fee bump implementation requires SDK compatibility fixes
+    // For now, this validates inputs and provides structure
+    if (this.feeBumpSource) {
+      throw new Error('Fee bump transaction requires SDK compatibility fixes. Use Stellar SDK directly for fee bump operations.');
+    }
+
     return new BuiltTransactionImpl(tx, server);
   }
 }

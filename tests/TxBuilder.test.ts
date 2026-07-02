@@ -673,6 +673,30 @@ describe('invokeContract()', () => {
   });
 });
 
+describe('wrapInFeeBump()', () => {
+  it('validates fee source address', () => {
+    const b = builder();
+    expect(b.wrapInFeeBump(DEST)).toBe(b);
+  });
+
+  it('validates fee source with custom fee', () => {
+    const b = builder();
+    expect(b.wrapInFeeBump(DEST, '200')).toBe(b);
+  });
+
+  it('throws on invalid fee source address', () => {
+    expect(() => builder().wrapInFeeBump('not-an-address')).toThrow('Invalid Stellar address');
+  });
+
+  it('throws on invalid fee amount', () => {
+    expect(() => builder().wrapInFeeBump(DEST, '0')).toThrow('must be greater than 0');
+  });
+
+  it('throws on negative fee amount', () => {
+    expect(() => builder().wrapInFeeBump(DEST, '-100')).toThrow('must be greater than 0');
+  });
+});
+
 describe('setMemo()', () => {
   it('chains correctly', () => {
     const b = builder();
