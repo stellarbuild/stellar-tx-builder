@@ -141,6 +141,12 @@ describe('addChangeTrust()', () => {
       builder().addChangeTrust({ asset: { code: 'USDC', issuer: DEST }, limit: '1000' })
     ).not.toThrow();
   });
+
+  it('throws friendly error on invalid issuer address', () => {
+    expect(() =>
+      builder().addChangeTrust({ asset: { code: 'USDC', issuer: 'not-a-valid-address' } })
+    ).toThrow('Invalid asset:');
+  });
 });
 
 describe('addManageOffer()', () => {

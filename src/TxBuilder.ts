@@ -288,7 +288,7 @@ export class TxBuilder {
    * @returns This instance for chaining
    */
   addChangeTrust(params: ChangeTrustParams): this {
-    const asset = new Asset(params.asset.code, params.asset.issuer);
+    const asset = resolveAsset({ code: params.asset.code, issuer: params.asset.issuer });
     this.operations.push(
       Operation.changeTrust({
         asset,
