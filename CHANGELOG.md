@@ -7,6 +7,26 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.0] — 2026-07-03
+
+### Fixed
+
+- **BREAKING**: Corrected timebounds implementation in `setTimebounds()` and `build()`. Previously, relative time values (e.g., `'+5m'`) were incorrectly passed to `setTimeout()`, which expects a duration from now, not an absolute timestamp. This caused transaction validity windows to be wildly incorrect (e.g., `'+5m'` produced a ~56-year window instead of 5 minutes). Now uses `setTimebounds()` with absolute Unix timestamps when timebounds are set. If you were relying on the broken (effectively infinite) timebound behavior, your transactions will now have the correct validity windows.
+
+### Changed
+
+- Removed broken `"module": "dist/index.esm.js"` field from package.json (file was never generated). Library now ships CommonJS only; ESM support is planned for future work.
+- `addChangeTrust()` now uses the `resolveAsset()` helper for consistent validation, producing friendly error messages like `"Invalid asset: code=\"X\", issuer=\"Y\""` instead of raw SDK errors.
+- Deleted dead root-level `TxBuilder.test.ts` file (237 lines). Jest was configured to only run tests in `tests/` directory, so this file never executed and could confuse contributors.
+
+### Added
+
+- Coverage reporting to CI with 80% threshold (branches, functions, lines, statements). Current coverage: 95.36% lines, 92.59% branches, 96% functions.
+- Added `repository`, `bugs`, and `homepage` fields to package.json for better npm metadata.
+- Regression tests for timebounds to verify absolute timestamps are correctly set for relative time values.
+
+---
+
 ## [0.2.0] — 2026-05-11
 
 ### Added

@@ -1,12 +1,20 @@
 {
   "name": "@stellarbuild/stellar-tx-builder",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Fluent, type-safe TypeScript transaction builder for Stellar",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stellarbuild/stellar-tx-builder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stellarbuild/stellar-tx-builder/issues"
+  },
+  "homepage": "https://github.com/stellarbuild/stellar-tx-builder#readme",
   "scripts": {
     "build": "tsc",
     "test": "jest",
