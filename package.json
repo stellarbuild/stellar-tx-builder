@@ -3,7 +3,6 @@
   "version": "0.2.0",
   "description": "Fluent, type-safe TypeScript transaction builder for Stellar",
   "main": "dist/index.js",
-  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
