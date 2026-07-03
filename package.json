@@ -10,6 +10,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "test:integration": "jest --testPathPattern=integration",
     "test:watch": "jest --watch",
     "lint": "eslint src --ext .ts",
