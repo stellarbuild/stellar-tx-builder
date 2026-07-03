@@ -10,7 +10,6 @@ import {
   Transaction,
   xdr,
   Address,
-  ScInt,
 } from '@stellar/stellar-sdk';
 import type {
   TxBuilderOptions,
@@ -618,8 +617,12 @@ export class TxBuilder {
 
     if (this.memo) builder.addMemo(this.memo);
 
-    const timeout = this.timebounds?.maxTime ?? TimeoutInfinite;
-    builder.setTimeout(timeout);
+    // Apply timebounds if set, otherwise use TimeoutInfinite
+    if (this.timebounds) {
+      builder.setTimebounds(this.timebounds.minTime, this.timebounds.maxTime);
+    } else {
+      builder.setTimeout(TimeoutInfinite);
+    }
 
     const tx = builder.build() as Transaction;
 

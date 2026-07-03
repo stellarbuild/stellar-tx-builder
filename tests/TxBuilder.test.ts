@@ -737,6 +737,53 @@ describe('setTimebounds()', () => {
   it('throws on unrecognised relative string', () => {
     expect(() => builder().setTimebounds({ maxTime: '+5x' })).toThrow('Invalid time value');
   });
+
+  it('sets correct absolute maxTime for relative +5m', async () => {
+    const b = builder().addPayment({ destination: DEST, amount: '10', asset: 'XLM' });
+    b.setTimebounds({ maxTime: '+5m' });
+    
+    const built = await b.build();
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const sdk = require('@stellar/stellar-sdk') as typeof import('@stellar/stellar-sdk');
+    const tx = new sdk.Transaction(built.xdr, sdk.Networks.TESTNET);
+    
+    const expectedMaxTime = Math.floor(Date.now() / 1000) + 300;
+    const actualMaxTime = parseInt(tx.timeBounds!.maxTime.toString());
+    
+    // Allow 5 seconds tolerance for test execution time
+    expect(Math.abs(actualMaxTime - expectedMaxTime)).toBeLessThanOrEqual(5);
+  });
+
+  it('sets correct absolute minTime and maxTime for relative times', async () => {
+    const b = builder().addPayment({ destination: DEST, amount: '10', asset: 'XLM' });
+    b.setTimebounds({ minTime: '+1m', maxTime: '+5m' });
+    
+    const built = await b.build();
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const sdk = require('@stellar/stellar-sdk') as typeof import('@stellar/stellar-sdk');
+    const tx = new sdk.Transaction(built.xdr, sdk.Networks.TESTNET);
+    
+    const expectedMinTime = Math.floor(Date.now() / 1000) + 60;
+    const expectedMaxTime = Math.floor(Date.now() / 1000) + 300;
+    const actualMinTime = parseInt(tx.timeBounds!.minTime.toString());
+    const actualMaxTime = parseInt(tx.timeBounds!.maxTime.toString());
+    
+    // Allow 5 seconds tolerance for test execution time
+    expect(Math.abs(actualMinTime - expectedMinTime)).toBeLessThanOrEqual(5);
+    expect(Math.abs(actualMaxTime - expectedMaxTime)).toBeLessThanOrEqual(5);
+  });
+
+  it('preserves TimeoutInfinite when no timebounds set', async () => {
+    const b = builder().addPayment({ destination: DEST, amount: '10', asset: 'XLM' });
+    
+    const built = await b.build();
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const sdk = require('@stellar/stellar-sdk') as typeof import('@stellar/stellar-sdk');
+    const tx = new sdk.Transaction(built.xdr, sdk.Networks.TESTNET);
+    
+    expect(tx.timeBounds!.maxTime.toString()).toBe('0');
+    expect(tx.timeBounds!.minTime.toString()).toBe('0');
+  });
 });
 
 describe('build()', () => {
