@@ -76,12 +76,12 @@
   "devDependencies": {
     "@stellar/stellar-sdk": "^15.1.0",
     "@types/jest": "^29.5.14",
-    "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^7.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.64.0",
+    "@typescript-eslint/parser": "^8.64.0",
     "eslint": "^8.0.0",
     "jest": "^29.7.0",
     "prettier": "^3.3.3",
     "ts-jest": "^29.4.11",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }
