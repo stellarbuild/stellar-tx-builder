@@ -1,12 +1,10 @@
 {
   "name": "@stellarbuild/stellar-tx-builder",
   "version": "0.3.0",
-  "description": "Fluent, type-safe TypeScript transaction builder for Stellar",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "description": "Fluent, type-safe TypeScript transaction builder for the Stellar network",
+  "author": "StellarBuild <hello@stellarbuild.io> (https://stellarbuild.io)",
+  "license": "MIT",
+  "homepage": "https://github.com/stellarbuild/stellar-tx-builder#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stellarbuild/stellar-tx-builder.git"
@@ -14,25 +12,64 @@
   "bugs": {
     "url": "https://github.com/stellarbuild/stellar-tx-builder/issues"
   },
-  "homepage": "https://github.com/stellarbuild/stellar-tx-builder#readme",
+  "keywords": [
+    "stellar",
+    "xlm",
+    "transaction",
+    "builder",
+    "typescript",
+    "soroban",
+    "blockchain",
+    "sdk",
+    "web3",
+    "horizons"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc --project tsconfig.json",
+    "build:esm": "tsc --project tsconfig.esm.json",
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
+    "prebuild": "npm run clean",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:integration": "jest --testPathPattern=integration",
     "test:watch": "jest --watch",
     "lint": "eslint src --ext .ts",
-    "prepublishOnly": "npm run build"
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm run test"
   },
-  "keywords": [
-    "stellar",
-    "transaction",
-    "builder",
-    "typescript",
-    "soroban",
-    "xlm"
-  ],
-  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "peerDependencies": {
     "@stellar/stellar-sdk": ">=12"
   },
@@ -43,6 +80,7 @@
     "@typescript-eslint/parser": "^7.0.0",
     "eslint": "^8.0.0",
     "jest": "^29.7.0",
+    "prettier": "^3.3.3",
     "ts-jest": "^29.4.11",
     "typescript": "^5.9.3"
   }

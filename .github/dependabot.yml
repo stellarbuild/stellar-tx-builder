@@ -1,0 +1,57 @@
+version: 2
+updates:
+  # npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "stellarbuild/maintainers"
+    assignees:
+      - "stellarbuild/maintainers"
+    labels:
+      - "dependencies"
+      - "automated"
+    groups:
+      # Group all TypeScript-related updates together
+      typescript-ecosystem:
+        patterns:
+          - "typescript"
+          - "@typescript-eslint/*"
+          - "ts-*"
+      # Group all Jest/testing updates together
+      testing:
+        patterns:
+          - "jest"
+          - "@types/jest"
+          - "ts-jest"
+      # Group all linting/formatting updates together
+      linting-formatting:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "prettier"
+    ignore:
+      # Do not auto-update the Stellar SDK major versions — review manually
+      - dependency-name: "@stellar/stellar-sdk"
+        update-types: ["version-update:semver-major"]
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "stellarbuild/devops"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"

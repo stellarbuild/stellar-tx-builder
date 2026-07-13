@@ -1,0 +1,70 @@
+name: 📚 Documentation Issue
+description: Report missing, incorrect, or unclear documentation
+title: "docs: "
+labels: ["documentation", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Good documentation is as important as good code. Thank you for helping us improve it.
+
+  - type: dropdown
+    id: doc_type
+    attributes:
+      label: Documentation Area
+      description: Which part of the documentation needs attention?
+      options:
+        - README
+        - API Reference (docs/api.md)
+        - Architecture Guide (docs/architecture.md)
+        - Installation Guide (docs/installation.md)
+        - Development Guide (docs/development.md)
+        - Testing Guide (docs/testing.md)
+        - Troubleshooting (docs/troubleshooting.md)
+        - CONTRIBUTING guide
+        - Code inline comments / JSDoc
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: Issue Type
+      options:
+        - Information is incorrect or outdated
+        - Information is missing
+        - Information is unclear or confusing
+        - Example code does not work
+        - Typo or grammatical error
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      description: Link to the specific file, section, or line number.
+      placeholder: "https://github.com/stellarbuild/stellar-tx-builder/blob/main/docs/api.md#L42"
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is wrong or missing? What would you expect to see instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Improvement
+      description: If you have a draft of improved content, paste it here.
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I am willing to submit a pull request with the fix.

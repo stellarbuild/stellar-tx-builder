@@ -34,8 +34,8 @@ import type {
  * Horizon API endpoints for each Stellar network
  */
 const HORIZON_URLS: Record<string, string> = {
-  mainnet:   'https://horizon.stellar.org',
-  testnet:   'https://horizon-testnet.stellar.org',
+  mainnet: 'https://horizon.stellar.org',
+  testnet: 'https://horizon-testnet.stellar.org',
   futurenet: 'https://horizon-futurenet.stellar.org',
 };
 
@@ -43,8 +43,8 @@ const HORIZON_URLS: Record<string, string> = {
  * Network passphrases for each Stellar network
  */
 const NETWORK_PASSPHRASES: Record<string, NetworkPassphrase> = {
-  mainnet:   Networks.PUBLIC,
-  testnet:   Networks.TESTNET,
+  mainnet: Networks.PUBLIC,
+  testnet: Networks.TESTNET,
   futurenet: Networks.FUTURENET,
 };
 
@@ -56,14 +56,14 @@ const NETWORK_PASSPHRASES: Record<string, NetworkPassphrase> = {
  */
 function resolveAsset(asset: 'XLM' | { code: string; issuer: string }): Asset {
   if (asset === 'XLM') return Asset.native();
-  
+
   if (!asset.code || typeof asset.code !== 'string') {
     throw new Error('Asset code must be a non-empty string');
   }
   if (!asset.issuer || typeof asset.issuer !== 'string') {
     throw new Error('Asset issuer must be a non-empty string');
   }
-  
+
   try {
     return new Asset(asset.code, asset.issuer);
   } catch (error) {
@@ -77,7 +77,10 @@ function resolveAsset(asset: 'XLM' | { code: string; issuer: string }): Asset {
  * @returns Price object with n and d properties
  * @throws Error if price is invalid
  */
-function resolvePrice(price: ManageOfferParams['price'] | ManageBuyOfferParams['price']): { n: number; d: number } {
+function resolvePrice(price: ManageOfferParams['price'] | ManageBuyOfferParams['price']): {
+  n: number;
+  d: number;
+} {
   if (typeof price === 'string') {
     const n = parseFloat(price);
     if (isNaN(n) || n <= 0) {
@@ -87,14 +90,14 @@ function resolvePrice(price: ManageOfferParams['price'] | ManageBuyOfferParams['
     // Stellar SDK will handle the conversion internally
     return { n: Math.floor(n * 10000000), d: 10000000 };
   }
-  
+
   if (typeof price === 'object' && price.n !== undefined && price.d !== undefined) {
     if (price.n <= 0 || price.d <= 0) {
       throw new Error(`Invalid price fraction: numerator and denominator must be positive`);
     }
     return { n: price.n, d: price.d };
   }
-  
+
   throw new Error(`Invalid price format: must be a string or {n, d} object`);
 }
 
@@ -133,7 +136,9 @@ function validateAddress(address: string, label: string): void {
   try {
     Keypair.fromPublicKey(address);
   } catch {
-    throw new Error(`Invalid Stellar address for ${label}: "${address}". Expected a valid public key starting with 'G'.`);
+    throw new Error(
+      `Invalid Stellar address for ${label}: "${address}". Expected a valid public key starting with 'G'.`,
+    );
   }
 }
 
@@ -168,9 +173,9 @@ class BuiltTransactionImpl implements BuiltTransaction {
   xdr: string;
 
   constructor(tx: Transaction, server: Horizon.Server) {
-    this.tx     = tx;
+    this.tx = tx;
     this.server = server;
-    this.xdr    = tx.toXDR();
+    this.xdr = tx.toXDR();
   }
 
   /**
@@ -200,10 +205,10 @@ class BuiltTransactionImpl implements BuiltTransaction {
   async submit(): Promise<SubmitResult> {
     const response = await this.server.submitTransaction(this.tx);
     return {
-      hash:       response.hash,
-      ledger:     response.ledger,
+      hash: response.hash,
+      ledger: response.ledger,
       successful: response.successful,
-      resultXdr:  response.result_xdr,
+      resultXdr: response.result_xdr,
     };
   }
 }
@@ -254,9 +259,9 @@ export class TxBuilder {
     this.operations.push(
       Operation.payment({
         destination: params.destination,
-        asset:       resolveAsset(params.asset),
-        amount:      params.amount,
-      })
+        asset: resolveAsset(params.asset),
+        amount: params.amount,
+      }),
     );
 
     if (params.memo) this.memo = Memo.text(params.memo);
@@ -275,9 +280,9 @@ export class TxBuilder {
 
     this.operations.push(
       Operation.createAccount({
-        destination:     params.destination,
+        destination: params.destination,
         startingBalance: params.startingBalance,
-      })
+      }),
     );
     return this;
   }
@@ -293,7 +298,7 @@ export class TxBuilder {
       Operation.changeTrust({
         asset,
         ...(params.limit !== undefined ? { limit: params.limit } : {}),
-      })
+      }),
     );
     return this;
   }
@@ -306,11 +311,11 @@ export class TxBuilder {
    */
   addManageOffer(params: ManageOfferParams): this {
     validateAmount(params.amount, 'offer amount');
-    
+
     const selling = resolveAsset(params.selling);
     const buying = resolveAsset(params.buying);
     const price = resolvePrice(params.price);
-    
+
     this.operations.push(
       Operation.manageSellOffer({
         selling,
@@ -318,7 +323,7 @@ export class TxBuilder {
         amount: params.amount,
         price,
         offerId: params.offerId || '0',
-      })
+      }),
     );
     return this;
   }
@@ -331,11 +336,11 @@ export class TxBuilder {
    */
   addManageBuyOffer(params: ManageBuyOfferParams): this {
     validateAmount(params.amount, 'buy offer amount');
-    
+
     const selling = resolveAsset(params.selling);
     const buying = resolveAsset(params.buying);
     const price = resolvePrice(params.price);
-    
+
     this.operations.push(
       Operation.manageBuyOffer({
         selling,
@@ -343,7 +348,7 @@ export class TxBuilder {
         buyAmount: params.amount,
         price,
         offerId: params.offerId || '0',
-      })
+      }),
     );
     return this;
   }
@@ -358,11 +363,11 @@ export class TxBuilder {
     validateAddress(params.destination, 'destination');
     validateAmount(params.sendAmount, 'send amount');
     validateAmount(params.destAmount, 'destination amount');
-    
+
     const sendAsset = resolveAsset(params.sendAsset);
     const destAsset = resolveAsset(params.destAsset);
     const path = params.path ? params.path.map(resolveAsset) : [];
-    
+
     this.operations.push(
       Operation.pathPaymentStrictSend({
         destination: params.destination,
@@ -371,7 +376,7 @@ export class TxBuilder {
         destAsset,
         destMin: params.destAmount,
         path,
-      })
+      }),
     );
     return this;
   }
@@ -384,62 +389,62 @@ export class TxBuilder {
    */
   addSetOptions(params: SetOptionsParams): this {
     const operationParams: Record<string, unknown> = {};
-    
+
     if (params.inflationDest !== undefined) {
       validateAddress(params.inflationDest, 'inflation destination');
       operationParams.inflationDest = params.inflationDest;
     }
-    
+
     if (params.clearFlags !== undefined) {
       operationParams.clearFlags = params.clearFlags;
     }
-    
+
     if (params.setFlags !== undefined) {
       operationParams.setFlags = params.setFlags;
     }
-    
+
     if (params.masterWeight !== undefined) {
       if (params.masterWeight < 0 || params.masterWeight > 255) {
         throw new Error('Master weight must be between 0 and 255');
       }
       operationParams.masterWeight = params.masterWeight;
     }
-    
+
     if (params.lowThreshold !== undefined) {
       if (params.lowThreshold < 0 || params.lowThreshold > 255) {
         throw new Error('Low threshold must be between 0 and 255');
       }
       operationParams.lowThreshold = params.lowThreshold;
     }
-    
+
     if (params.medThreshold !== undefined) {
       if (params.medThreshold < 0 || params.medThreshold > 255) {
         throw new Error('Medium threshold must be between 0 and 255');
       }
       operationParams.medThreshold = params.medThreshold;
     }
-    
+
     if (params.highThreshold !== undefined) {
       if (params.highThreshold < 0 || params.highThreshold > 255) {
         throw new Error('High threshold must be between 0 and 255');
       }
       operationParams.highThreshold = params.highThreshold;
     }
-    
+
     if (params.homeDomain !== undefined) {
       if (params.homeDomain.length > 32) {
         throw new Error('Home domain must be 32 characters or fewer');
       }
       operationParams.homeDomain = params.homeDomain;
     }
-    
+
     if (params.signer !== undefined) {
       if (params.signer.weight < 0 || params.signer.weight > 255) {
         throw new Error('Signer weight must be between 0 and 255');
       }
-      
+
       const signer: Record<string, unknown> = { weight: params.signer.weight };
-      
+
       if (params.signer.ed25519PublicKey) {
         validateAddress(params.signer.ed25519PublicKey, 'signer public key');
         signer.ed25519PublicKey = params.signer.ed25519PublicKey;
@@ -464,10 +469,10 @@ export class TxBuilder {
       } else {
         throw new Error('Signer must specify one of: ed25519PublicKey, sha256Hash, or preAuthTx');
       }
-      
+
       operationParams.signer = signer;
     }
-    
+
     this.operations.push(Operation.setOptions(operationParams));
     return this;
   }
@@ -482,28 +487,28 @@ export class TxBuilder {
     if (!params.name || typeof params.name !== 'string') {
       throw new Error('Data name must be a non-empty string');
     }
-    
+
     const nameBytes = Buffer.byteLength(params.name, 'utf8');
     if (nameBytes > 64) {
       throw new Error(`Data name exceeds 64-byte limit (${nameBytes} bytes)`);
     }
-    
+
     if (params.value !== undefined && params.value !== null) {
       if (typeof params.value !== 'string') {
         throw new Error('Data value must be a string');
       }
-      
+
       const valueBytes = Buffer.byteLength(params.value, 'utf8');
       if (valueBytes > 64) {
         throw new Error(`Data value exceeds 64-byte limit (${valueBytes} bytes)`);
       }
     }
-    
+
     this.operations.push(
       Operation.manageData({
         name: params.name,
         value: params.value,
-      })
+      }),
     );
     return this;
   }
@@ -520,21 +525,23 @@ export class TxBuilder {
     if (!params.contractId || typeof params.contractId !== 'string') {
       throw new Error('Contract ID must be a non-empty string');
     }
-    
+
     if (!params.functionName || typeof params.functionName !== 'string') {
       throw new Error('Function name must be a non-empty string');
     }
-    
+
     // Validate contract ID format
     try {
       new Address(params.contractId);
     } catch (error) {
       throw new Error('Invalid contract ID format');
     }
-    
+
     // Placeholder - full Soroban implementation requires complex XDR handling
     // This validates inputs and provides type safety
-    throw new Error('Soroban contract invocation is not yet fully implemented. Use @stellar/stellar-sdk directly for Soroban operations.');
+    throw new Error(
+      'Soroban contract invocation is not yet fully implemented. Use @stellar/stellar-sdk directly for Soroban operations.',
+    );
   }
 
   /**
@@ -546,15 +553,15 @@ export class TxBuilder {
    */
   wrapInFeeBump(feeSource: string, fee?: string): this {
     validateAddress(feeSource, 'fee source');
-    
+
     if (fee !== undefined) {
       validateAmount(fee, 'fee');
     }
-    
+
     // Store fee bump parameters to be applied during build
     this.feeBumpSource = feeSource;
     this.feeBumpFee = fee;
-    
+
     return this;
   }
 
@@ -569,8 +576,7 @@ export class TxBuilder {
       throw new Error('Memo must be a non-empty string');
     }
     const byteLength = Buffer.byteLength(text, 'utf8');
-    if (byteLength > 28)
-      throw new Error(`Memo text exceeds 28-byte limit (${byteLength} bytes)`);
+    if (byteLength > 28) throw new Error(`Memo text exceeds 28-byte limit (${byteLength} bytes)`);
     this.memo = Memo.text(text);
     return this;
   }
@@ -602,12 +608,12 @@ export class TxBuilder {
 
     const horizonUrl = this.options.horizonUrl ?? HORIZON_URLS[this.options.network];
     const passphrase = NETWORK_PASSPHRASES[this.options.network];
-    const server     = new Horizon.Server(horizonUrl);
+    const server = new Horizon.Server(horizonUrl);
 
     const sourceAccount = await server.loadAccount(this.keypair.publicKey());
 
     const builder = new StellarTransactionBuilder(sourceAccount, {
-      fee:               this.options.fee ?? '100',
+      fee: this.options.fee ?? '100',
       networkPassphrase: passphrase,
     });
 
@@ -629,7 +635,9 @@ export class TxBuilder {
     // Note: Fee bump implementation requires SDK compatibility fixes
     // For now, this validates inputs and provides structure
     if (this.feeBumpSource) {
-      throw new Error('Fee bump transaction requires SDK compatibility fixes. Use Stellar SDK directly for fee bump operations.');
+      throw new Error(
+        'Fee bump transaction requires SDK compatibility fixes. Use Stellar SDK directly for fee bump operations.',
+      );
     }
 
     return new BuiltTransactionImpl(tx, server);

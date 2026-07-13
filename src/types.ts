@@ -3,16 +3,17 @@ import type { Keypair, Networks } from '@stellar/stellar-sdk';
 /**
  * Supported Stellar network passphrases
  */
-export type NetworkPassphrase = typeof Networks.PUBLIC | typeof Networks.TESTNET | typeof Networks.FUTURENET;
+export type NetworkPassphrase =
+  typeof Networks.PUBLIC | typeof Networks.TESTNET | typeof Networks.FUTURENET;
 
 /**
  * Configuration options for TxBuilder
  */
 export interface TxBuilderOptions {
   network: 'mainnet' | 'testnet' | 'futurenet';
-  fee?: string;         // base fee in stroops, default '100'
-  horizonUrl?: string;  // override default Horizon endpoint
-  timeout?: number;     // request timeout in ms
+  fee?: string; // base fee in stroops, default '100'
+  horizonUrl?: string; // override default Horizon endpoint
+  timeout?: number; // request timeout in ms
 }
 
 /**
@@ -109,7 +110,13 @@ export interface ManageDataParams {
 export interface InvokeContractParams {
   contractId: string;
   functionName: string;
-  args?: (string | number | boolean | { address: string } | { amount: string; asset: { code: string; issuer: string } | 'XLM' })[];
+  args?: (
+    | string
+    | number
+    | boolean
+    | { address: string }
+    | { amount: string; asset: { code: string; issuer: string } | 'XLM' }
+  )[];
 }
 
 /**

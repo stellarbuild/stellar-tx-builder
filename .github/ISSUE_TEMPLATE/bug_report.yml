@@ -1,0 +1,98 @@
+name: 🐛 Bug Report
+description: Report a reproducible bug in stellar-tx-builder
+title: "bug: "
+labels: ["bug", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug. Please fill in as much detail as possible.
+        Before submitting, please search [existing issues](https://github.com/stellarbuild/stellar-tx-builder/issues) to avoid duplicates.
+
+  - type: input
+    id: version
+    attributes:
+      label: Package Version
+      description: Which version of `@stellarbuild/stellar-tx-builder` are you using?
+      placeholder: "e.g. 0.3.0"
+    validations:
+      required: true
+
+  - type: input
+    id: stellar-sdk-version
+    attributes:
+      label: Stellar SDK Version
+      description: Which version of `@stellar/stellar-sdk` are you using?
+      placeholder: "e.g. 15.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js Version
+      description: What version of Node.js are you running?
+      placeholder: "e.g. 20.14.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: network
+    attributes:
+      label: Stellar Network
+      description: Which network were you targeting when the bug occurred?
+      options:
+        - testnet
+        - mainnet
+        - futurenet
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: "When I call `addPayment()` with a custom asset, it throws an unexpected error..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal Reproduction
+      description: Provide the smallest possible code snippet that reproduces the bug.
+      render: typescript
+      placeholder: |
+        import { TxBuilder } from '@stellarbuild/stellar-tx-builder';
+        import { Keypair } from '@stellar/stellar-sdk';
+
+        const kp = Keypair.fromSecret('S...');
+        const tx = await TxBuilder.for(kp, { network: 'testnet' })
+          .addPayment({ destination: 'G...', amount: '10', asset: 'XLM' })
+          .build();
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behaviour
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behaviour
+      description: What actually happened? Include the full error message and stack trace if available.
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information that might help us diagnose the issue (logs, screenshots, XDR strings, etc.)

@@ -3,7 +3,7 @@ import { TxBuilder } from '../src/TxBuilder';
 
 // ── fixtures ──────────────────────────────────────────────────────────────
 const SOURCE = Keypair.random();
-const DEST   = Keypair.random().publicKey();
+const DEST = Keypair.random().publicKey();
 
 // Mock Horizon — no network calls in unit tests
 jest.mock('@stellar/stellar-sdk', () => {
@@ -16,14 +16,14 @@ jest.mock('@stellar/stellar-sdk', () => {
 
   return {
     ...actual,
-    _mockSourceKp: sourceKp,   // exposed so tests can reference it
+    _mockSourceKp: sourceKp, // exposed so tests can reference it
     Horizon: {
       ...actual.Horizon,
       Server: jest.fn().mockImplementation(() => ({
-        loadAccount:       jest.fn().mockResolvedValue(mockAccount),
+        loadAccount: jest.fn().mockResolvedValue(mockAccount),
         submitTransaction: jest.fn().mockResolvedValue({
-          hash:       'abc123',
-          ledger:     1000,
+          hash: 'abc123',
+          ledger: 1000,
           successful: true,
           result_xdr: 'AAAA',
         }),
@@ -58,55 +58,63 @@ describe('addPayment()', () => {
 
   it('accepts a custom asset payment', () => {
     expect(() =>
-      builder().addPayment({ destination: DEST, amount: '50', asset: { code: 'USDC', issuer: DEST } })
+      builder().addPayment({
+        destination: DEST,
+        amount: '50',
+        asset: { code: 'USDC', issuer: DEST },
+      }),
     ).not.toThrow();
   });
 
   it('throws on invalid destination address', () => {
     expect(() =>
-      builder().addPayment({ destination: 'not-an-address', amount: '10', asset: 'XLM' })
+      builder().addPayment({ destination: 'not-an-address', amount: '10', asset: 'XLM' }),
     ).toThrow('Invalid Stellar address');
   });
 
   it('throws on empty destination address', () => {
-    expect(() =>
-      builder().addPayment({ destination: '', amount: '10', asset: 'XLM' })
-    ).toThrow('must be a non-empty string');
+    expect(() => builder().addPayment({ destination: '', amount: '10', asset: 'XLM' })).toThrow(
+      'must be a non-empty string',
+    );
   });
 
   it('throws on zero amount', () => {
-    expect(() =>
-      builder().addPayment({ destination: DEST, amount: '0', asset: 'XLM' })
-    ).toThrow('must be greater than 0');
+    expect(() => builder().addPayment({ destination: DEST, amount: '0', asset: 'XLM' })).toThrow(
+      'must be greater than 0',
+    );
   });
 
   it('throws on negative amount', () => {
-    expect(() =>
-      builder().addPayment({ destination: DEST, amount: '-5', asset: 'XLM' })
-    ).toThrow('must be greater than 0');
+    expect(() => builder().addPayment({ destination: DEST, amount: '-5', asset: 'XLM' })).toThrow(
+      'must be greater than 0',
+    );
   });
 
   it('throws on empty amount', () => {
-    expect(() =>
-      builder().addPayment({ destination: DEST, amount: '', asset: 'XLM' })
-    ).toThrow('must be a non-empty string');
+    expect(() => builder().addPayment({ destination: DEST, amount: '', asset: 'XLM' })).toThrow(
+      'must be a non-empty string',
+    );
   });
 
   it('throws on invalid amount string', () => {
     expect(() =>
-      builder().addPayment({ destination: DEST, amount: 'not-a-number', asset: 'XLM' })
+      builder().addPayment({ destination: DEST, amount: 'not-a-number', asset: 'XLM' }),
     ).toThrow('is not a valid number');
   });
 
   it('throws on custom asset with empty code', () => {
     expect(() =>
-      builder().addPayment({ destination: DEST, amount: '10', asset: { code: '', issuer: DEST } })
+      builder().addPayment({ destination: DEST, amount: '10', asset: { code: '', issuer: DEST } }),
     ).toThrow('Asset code must be a non-empty string');
   });
 
   it('throws on custom asset with empty issuer', () => {
     expect(() =>
-      builder().addPayment({ destination: DEST, amount: '10', asset: { code: 'USDC', issuer: '' } })
+      builder().addPayment({
+        destination: DEST,
+        amount: '10',
+        asset: { code: 'USDC', issuer: '' },
+      }),
     ).toThrow('Asset issuer must be a non-empty string');
   });
 });
@@ -118,15 +126,15 @@ describe('addCreateAccount()', () => {
   });
 
   it('throws on invalid address', () => {
-    expect(() =>
-      builder().addCreateAccount({ destination: 'bad', startingBalance: '2' })
-    ).toThrow('Invalid Stellar address');
+    expect(() => builder().addCreateAccount({ destination: 'bad', startingBalance: '2' })).toThrow(
+      'Invalid Stellar address',
+    );
   });
 
   it('throws on zero startingBalance', () => {
-    expect(() =>
-      builder().addCreateAccount({ destination: DEST, startingBalance: '0' })
-    ).toThrow('Invalid amount');
+    expect(() => builder().addCreateAccount({ destination: DEST, startingBalance: '0' })).toThrow(
+      'Invalid amount',
+    );
   });
 });
 
@@ -138,13 +146,13 @@ describe('addChangeTrust()', () => {
 
   it('accepts an optional limit', () => {
     expect(() =>
-      builder().addChangeTrust({ asset: { code: 'USDC', issuer: DEST }, limit: '1000' })
+      builder().addChangeTrust({ asset: { code: 'USDC', issuer: DEST }, limit: '1000' }),
     ).not.toThrow();
   });
 
   it('throws friendly error on invalid issuer address', () => {
     expect(() =>
-      builder().addChangeTrust({ asset: { code: 'USDC', issuer: 'not-a-valid-address' } })
+      builder().addChangeTrust({ asset: { code: 'USDC', issuer: 'not-a-valid-address' } }),
     ).toThrow('Invalid asset:');
   });
 });
@@ -158,7 +166,7 @@ describe('addManageOffer()', () => {
         buying: { code: 'USDC', issuer: DEST },
         amount: '100',
         price: '0.5',
-      })
+      }),
     ).toBe(b);
   });
 
@@ -170,7 +178,7 @@ describe('addManageOffer()', () => {
         buying: 'XLM',
         amount: '50',
         price: '2.0',
-      })
+      }),
     ).toBe(b);
   });
 
@@ -181,7 +189,7 @@ describe('addManageOffer()', () => {
         buying: { code: 'USDC', issuer: DEST },
         amount: '100',
         price: { n: 1, d: 2 },
-      })
+      }),
     ).not.toThrow();
   });
 
@@ -193,7 +201,7 @@ describe('addManageOffer()', () => {
         amount: '100',
         price: '0.5',
         offerId: '12345',
-      })
+      }),
     ).not.toThrow();
   });
 
@@ -204,7 +212,7 @@ describe('addManageOffer()', () => {
         buying: { code: 'USDC', issuer: DEST },
         amount: '0',
         price: '0.5',
-      })
+      }),
     ).toThrow('must be greater than 0');
   });
 
@@ -215,7 +223,7 @@ describe('addManageOffer()', () => {
         buying: { code: 'USDC', issuer: DEST },
         amount: '100',
         price: 'not-a-number',
-      })
+      }),
     ).toThrow('Invalid price');
   });
 
@@ -226,7 +234,7 @@ describe('addManageOffer()', () => {
         buying: { code: 'USDC', issuer: DEST },
         amount: '100',
         price: '-1.5',
-      })
+      }),
     ).toThrow('must be a positive number');
   });
 
@@ -237,7 +245,7 @@ describe('addManageOffer()', () => {
         buying: { code: 'USDC', issuer: DEST },
         amount: '100',
         price: { n: -1, d: 2 },
-      })
+      }),
     ).toThrow('numerator and denominator must be positive');
   });
 
@@ -248,7 +256,7 @@ describe('addManageOffer()', () => {
         buying: 'XLM',
         amount: '100',
         price: '0.5',
-      })
+      }),
     ).toThrow('Asset code must be a non-empty string');
   });
 
@@ -259,7 +267,7 @@ describe('addManageOffer()', () => {
         buying: { code: '', issuer: DEST },
         amount: '100',
         price: '0.5',
-      })
+      }),
     ).toThrow('Asset code must be a non-empty string');
   });
 });
@@ -273,7 +281,7 @@ describe('addManageBuyOffer()', () => {
         buying: { code: 'USDC', issuer: DEST },
         amount: '100',
         price: '0.5',
-      })
+      }),
     ).toBe(b);
   });
 
@@ -285,7 +293,7 @@ describe('addManageBuyOffer()', () => {
         buying: 'XLM',
         amount: '50',
         price: '2.0',
-      })
+      }),
     ).toBe(b);
   });
 
@@ -296,7 +304,7 @@ describe('addManageBuyOffer()', () => {
         buying: { code: 'USDC', issuer: DEST },
         amount: '100',
         price: { n: 1, d: 2 },
-      })
+      }),
     ).not.toThrow();
   });
 
@@ -308,7 +316,7 @@ describe('addManageBuyOffer()', () => {
         amount: '100',
         price: '0.5',
         offerId: '12345',
-      })
+      }),
     ).not.toThrow();
   });
 
@@ -319,7 +327,7 @@ describe('addManageBuyOffer()', () => {
         buying: { code: 'USDC', issuer: DEST },
         amount: '0',
         price: '0.5',
-      })
+      }),
     ).toThrow('must be greater than 0');
   });
 
@@ -330,7 +338,7 @@ describe('addManageBuyOffer()', () => {
         buying: { code: 'USDC', issuer: DEST },
         amount: '100',
         price: 'not-a-number',
-      })
+      }),
     ).toThrow('Invalid price');
   });
 
@@ -341,7 +349,7 @@ describe('addManageBuyOffer()', () => {
         buying: { code: 'USDC', issuer: DEST },
         amount: '100',
         price: '-1.5',
-      })
+      }),
     ).toThrow('must be a positive number');
   });
 
@@ -352,7 +360,7 @@ describe('addManageBuyOffer()', () => {
         buying: { code: 'USDC', issuer: DEST },
         amount: '100',
         price: { n: -1, d: 2 },
-      })
+      }),
     ).toThrow('numerator and denominator must be positive');
   });
 
@@ -363,7 +371,7 @@ describe('addManageBuyOffer()', () => {
         buying: 'XLM',
         amount: '100',
         price: '0.5',
-      })
+      }),
     ).toThrow('Asset code must be a non-empty string');
   });
 
@@ -374,7 +382,7 @@ describe('addManageBuyOffer()', () => {
         buying: { code: '', issuer: DEST },
         amount: '100',
         price: '0.5',
-      })
+      }),
     ).toThrow('Asset code must be a non-empty string');
   });
 });
@@ -389,7 +397,7 @@ describe('addPathPayment()', () => {
         sendAmount: '100',
         destAsset: { code: 'USDC', issuer: DEST },
         destAmount: '50',
-      })
+      }),
     ).toBe(b);
   });
 
@@ -402,7 +410,7 @@ describe('addPathPayment()', () => {
         sendAmount: '50',
         destAsset: 'XLM',
         destAmount: '100',
-      })
+      }),
     ).toBe(b);
   });
 
@@ -415,7 +423,7 @@ describe('addPathPayment()', () => {
         destAsset: { code: 'USDC', issuer: DEST },
         destAmount: '50',
         path: [{ code: 'EUR', issuer: DEST }],
-      })
+      }),
     ).not.toThrow();
   });
 
@@ -428,7 +436,7 @@ describe('addPathPayment()', () => {
         destAsset: { code: 'USDC', issuer: DEST },
         destAmount: '50',
         path: [],
-      })
+      }),
     ).not.toThrow();
   });
 
@@ -440,7 +448,7 @@ describe('addPathPayment()', () => {
         sendAmount: '100',
         destAsset: { code: 'USDC', issuer: DEST },
         destAmount: '50',
-      })
+      }),
     ).toThrow('Invalid Stellar address');
   });
 
@@ -452,7 +460,7 @@ describe('addPathPayment()', () => {
         sendAmount: '0',
         destAsset: { code: 'USDC', issuer: DEST },
         destAmount: '50',
-      })
+      }),
     ).toThrow('must be greater than 0');
   });
 
@@ -464,7 +472,7 @@ describe('addPathPayment()', () => {
         sendAmount: '100',
         destAsset: { code: 'USDC', issuer: DEST },
         destAmount: '0',
-      })
+      }),
     ).toThrow('must be greater than 0');
   });
 
@@ -476,7 +484,7 @@ describe('addPathPayment()', () => {
         sendAmount: '100',
         destAsset: { code: 'USDC', issuer: DEST },
         destAmount: '50',
-      })
+      }),
     ).toThrow('Asset code must be a non-empty string');
   });
 
@@ -488,7 +496,7 @@ describe('addPathPayment()', () => {
         sendAmount: '100',
         destAsset: { code: '', issuer: DEST },
         destAmount: '50',
-      })
+      }),
     ).toThrow('Asset code must be a non-empty string');
   });
 
@@ -501,7 +509,7 @@ describe('addPathPayment()', () => {
         destAsset: { code: 'USDC', issuer: DEST },
         destAmount: '50',
         path: [{ code: '', issuer: DEST }],
-      })
+      }),
     ).toThrow('Asset code must be a non-empty string');
   });
 });
@@ -542,7 +550,7 @@ describe('addSetOptions()', () => {
     expect(
       b.addSetOptions({
         signer: { ed25519PublicKey: DEST, weight: 1 },
-      })
+      }),
     ).toBe(b);
   });
 
@@ -551,7 +559,7 @@ describe('addSetOptions()', () => {
     expect(
       b.addSetOptions({
         signer: { sha256Hash: 'a'.repeat(64), weight: 1 },
-      })
+      }),
     ).toBe(b);
   });
 
@@ -560,31 +568,39 @@ describe('addSetOptions()', () => {
     expect(
       b.addSetOptions({
         signer: { preAuthTx: 'b'.repeat(64), weight: 1 },
-      })
+      }),
     ).toBe(b);
   });
 
   it('throws on invalid inflation destination', () => {
-    expect(() => builder().addSetOptions({ inflationDest: 'not-an-address' })).toThrow('Invalid Stellar address');
+    expect(() => builder().addSetOptions({ inflationDest: 'not-an-address' })).toThrow(
+      'Invalid Stellar address',
+    );
   });
 
   it('throws on master weight out of range', () => {
-    expect(() => builder().addSetOptions({ masterWeight: 256 })).toThrow('must be between 0 and 255');
+    expect(() => builder().addSetOptions({ masterWeight: 256 })).toThrow(
+      'must be between 0 and 255',
+    );
   });
 
   it('throws on low threshold out of range', () => {
-    expect(() => builder().addSetOptions({ lowThreshold: -1 })).toThrow('must be between 0 and 255');
+    expect(() => builder().addSetOptions({ lowThreshold: -1 })).toThrow(
+      'must be between 0 and 255',
+    );
   });
 
   it('throws on home domain too long', () => {
-    expect(() => builder().addSetOptions({ homeDomain: 'a'.repeat(33) })).toThrow('32 characters or fewer');
+    expect(() => builder().addSetOptions({ homeDomain: 'a'.repeat(33) })).toThrow(
+      '32 characters or fewer',
+    );
   });
 
   it('throws on signer weight out of range', () => {
     expect(() =>
       builder().addSetOptions({
         signer: { ed25519PublicKey: DEST, weight: 256 },
-      })
+      }),
     ).toThrow('must be between 0 and 255');
   });
 
@@ -592,7 +608,7 @@ describe('addSetOptions()', () => {
     expect(() =>
       builder().addSetOptions({
         signer: { weight: 1 } as any,
-      })
+      }),
     ).toThrow('must specify one of');
   });
 
@@ -600,7 +616,7 @@ describe('addSetOptions()', () => {
     expect(() =>
       builder().addSetOptions({
         signer: { ed25519PublicKey: 'not-an-address', weight: 1 },
-      })
+      }),
     ).toThrow('Invalid Stellar address');
   });
 });
@@ -625,19 +641,27 @@ describe('addManageData()', () => {
   });
 
   it('throws on empty name', () => {
-    expect(() => builder().addManageData({ name: '', value: 'value' })).toThrow('must be a non-empty string');
+    expect(() => builder().addManageData({ name: '', value: 'value' })).toThrow(
+      'must be a non-empty string',
+    );
   });
 
   it('throws on name exceeding 64 bytes', () => {
-    expect(() => builder().addManageData({ name: 'a'.repeat(65), value: 'value' })).toThrow('exceeds 64-byte limit');
+    expect(() => builder().addManageData({ name: 'a'.repeat(65), value: 'value' })).toThrow(
+      'exceeds 64-byte limit',
+    );
   });
 
   it('throws on value exceeding 64 bytes', () => {
-    expect(() => builder().addManageData({ name: 'key', value: 'b'.repeat(65) })).toThrow('exceeds 64-byte limit');
+    expect(() => builder().addManageData({ name: 'key', value: 'b'.repeat(65) })).toThrow(
+      'exceeds 64-byte limit',
+    );
   });
 
   it('throws on non-string value', () => {
-    expect(() => builder().addManageData({ name: 'key', value: 123 as any })).toThrow('must be a string');
+    expect(() => builder().addManageData({ name: 'key', value: 123 as any })).toThrow(
+      'must be a string',
+    );
   });
 });
 
@@ -647,7 +671,7 @@ describe('invokeContract()', () => {
       builder().invokeContract({
         contractId: DEST,
         functionName: 'hello',
-      })
+      }),
     ).toThrow('not yet fully implemented');
   });
 
@@ -656,7 +680,7 @@ describe('invokeContract()', () => {
       builder().invokeContract({
         contractId: '',
         functionName: 'hello',
-      })
+      }),
     ).toThrow('must be a non-empty string');
   });
 
@@ -665,7 +689,7 @@ describe('invokeContract()', () => {
       builder().invokeContract({
         contractId: DEST,
         functionName: '',
-      })
+      }),
     ).toThrow('must be a non-empty string');
   });
 
@@ -674,7 +698,7 @@ describe('invokeContract()', () => {
       builder().invokeContract({
         contractId: 'not-an-address',
         functionName: 'hello',
-      })
+      }),
     ).toThrow('Invalid contract ID format');
   });
 });
@@ -730,13 +754,13 @@ describe('setTimebounds()', () => {
 
   it('accepts unix timestamp numbers', () => {
     expect(() =>
-      builder().setTimebounds({ maxTime: Math.floor(Date.now() / 1000) + 300 })
+      builder().setTimebounds({ maxTime: Math.floor(Date.now() / 1000) + 300 }),
     ).not.toThrow();
   });
 
   it('accepts ISO date strings', () => {
     expect(() =>
-      builder().setTimebounds({ maxTime: new Date(Date.now() + 60000).toISOString() })
+      builder().setTimebounds({ maxTime: new Date(Date.now() + 60000).toISOString() }),
     ).not.toThrow();
   });
 
@@ -747,15 +771,15 @@ describe('setTimebounds()', () => {
   it('sets correct absolute maxTime for relative +5m', async () => {
     const b = builder().addPayment({ destination: DEST, amount: '10', asset: 'XLM' });
     b.setTimebounds({ maxTime: '+5m' });
-    
+
     const built = await b.build();
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const sdk = require('@stellar/stellar-sdk') as typeof import('@stellar/stellar-sdk');
     const tx = new sdk.Transaction(built.xdr, sdk.Networks.TESTNET);
-    
+
     const expectedMaxTime = Math.floor(Date.now() / 1000) + 300;
     const actualMaxTime = parseInt(tx.timeBounds!.maxTime.toString());
-    
+
     // Allow 5 seconds tolerance for test execution time
     expect(Math.abs(actualMaxTime - expectedMaxTime)).toBeLessThanOrEqual(5);
   });
@@ -763,17 +787,17 @@ describe('setTimebounds()', () => {
   it('sets correct absolute minTime and maxTime for relative times', async () => {
     const b = builder().addPayment({ destination: DEST, amount: '10', asset: 'XLM' });
     b.setTimebounds({ minTime: '+1m', maxTime: '+5m' });
-    
+
     const built = await b.build();
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const sdk = require('@stellar/stellar-sdk') as typeof import('@stellar/stellar-sdk');
     const tx = new sdk.Transaction(built.xdr, sdk.Networks.TESTNET);
-    
+
     const expectedMinTime = Math.floor(Date.now() / 1000) + 60;
     const expectedMaxTime = Math.floor(Date.now() / 1000) + 300;
     const actualMinTime = parseInt(tx.timeBounds!.minTime.toString());
     const actualMaxTime = parseInt(tx.timeBounds!.maxTime.toString());
-    
+
     // Allow 5 seconds tolerance for test execution time
     expect(Math.abs(actualMinTime - expectedMinTime)).toBeLessThanOrEqual(5);
     expect(Math.abs(actualMaxTime - expectedMaxTime)).toBeLessThanOrEqual(5);
@@ -781,12 +805,12 @@ describe('setTimebounds()', () => {
 
   it('preserves TimeoutInfinite when no timebounds set', async () => {
     const b = builder().addPayment({ destination: DEST, amount: '10', asset: 'XLM' });
-    
+
     const built = await b.build();
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const sdk = require('@stellar/stellar-sdk') as typeof import('@stellar/stellar-sdk');
     const tx = new sdk.Transaction(built.xdr, sdk.Networks.TESTNET);
-    
+
     expect(tx.timeBounds!.maxTime.toString()).toBe('0');
     expect(tx.timeBounds!.minTime.toString()).toBe('0');
   });
@@ -846,9 +870,7 @@ describe('BuiltTransaction.sign()', () => {
 describe('BuiltTransaction.submit()', () => {
   it('returns a SubmitResult with hash, ledger, and successful flag', async () => {
     const result = await (
-      await builder()
-        .addPayment({ destination: DEST, amount: '10', asset: 'XLM' })
-        .build()
+      await builder().addPayment({ destination: DEST, amount: '10', asset: 'XLM' }).build()
     )
       .sign(MOCK_SOURCE)
       .submit();

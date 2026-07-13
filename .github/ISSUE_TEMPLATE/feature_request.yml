@@ -1,0 +1,92 @@
+name: 🚀 Feature Request
+description: Propose a new feature or enhancement for stellar-tx-builder
+title: "feat: "
+labels: ["enhancement", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an improvement. Before submitting, please search
+        [existing issues](https://github.com/stellarbuild/stellar-tx-builder/issues) and the
+        [roadmap](https://github.com/stellarbuild/stellar-tx-builder/blob/main/ROADMAP.md) to see if
+        this is already planned.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: Which area does your feature request fall into?
+      options:
+        - New Stellar operation support
+        - Soroban / smart contract support
+        - Developer experience (DX) improvement
+        - Error handling improvement
+        - TypeScript typing improvement
+        - Performance improvement
+        - Documentation improvement
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: |
+        What problem does this feature solve? 
+        Is your feature request related to a pain point you have encountered? If so, describe it clearly.
+      placeholder: "I'm frustrated when I have to... because..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature you would like. Be as specific as possible.
+      placeholder: "I would like a `addClaimableBalance()` method that..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: api
+    attributes:
+      label: Proposed API (if applicable)
+      description: If you have a specific API design in mind, sketch it here.
+      render: typescript
+      placeholder: |
+        // Example proposed API
+        const tx = await TxBuilder.for(keypair, { network: 'testnet' })
+          .addClaimableBalance({
+            asset: 'XLM',
+            amount: '100',
+            claimants: [{ destination: 'G...', predicate: 'unconditional' }],
+          })
+          .build();
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any workarounds or alternative approaches?
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Critical — blocking my project
+        - High — significantly impacts my workflow
+        - Medium — would be a nice improvement
+        - Low — minor convenience
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I am willing to submit a pull request for this feature.
