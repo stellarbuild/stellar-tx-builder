@@ -39,6 +39,13 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "@typescript-eslint/*"
         update-types: ["version-update:semver-major"]
+      # TypeScript 7.0 (GA July 2026) is a Go-native compiler rewrite that
+      # ships without a stable programmatic API — ts-jest and
+      # @typescript-eslint both depend on that API and are expected to
+      # break until they ship 7.x-compatible releases. Hold major bumps
+      # here until those consumers confirm support.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
