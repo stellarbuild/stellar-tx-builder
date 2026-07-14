@@ -1,19 +1,8 @@
 # CODEOWNERS
 # See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# This project currently has a single maintainer. All paths route to the same
+# owner for now — split this out by team once there are multiple active
+# reviewers, rather than referencing GitHub teams that don't exist yet.
 
-# Global ownership — all files require a review from a core maintainer
-*                   @stellarbuild/maintainers
-
-# Source code — requires SDK reviewer
-/src/               @stellarbuild/sdk-reviewers
-
-# Documentation — can be reviewed by docs team
-/docs/              @stellarbuild/docs-reviewers
-*.md                @stellarbuild/docs-reviewers
-
-# CI/CD — requires DevOps sign-off
-/.github/           @stellarbuild/devops
-
-# Package configuration — requires maintainer approval
-package.json        @stellarbuild/maintainers
-tsconfig*.json      @stellarbuild/maintainers
+*                   @T-kesh

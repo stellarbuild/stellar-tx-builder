@@ -9,13 +9,6 @@ updates:
       time: "09:00"
       timezone: "UTC"
     open-pull-requests-limit: 10
-    reviewers:
-      - "stellarbuild/maintainers"
-    assignees:
-      - "stellarbuild/maintainers"
-    labels:
-      - "dependencies"
-      - "automated"
     groups:
       # Group all TypeScript-related updates together
       typescript-ecosystem:
@@ -39,6 +32,13 @@ updates:
       # Do not auto-update the Stellar SDK major versions — review manually
       - dependency-name: "@stellar/stellar-sdk"
         update-types: ["version-update:semver-major"]
+      # ESLint 9+ requires migrating .eslintrc.json to flat config
+      # (eslint.config.js) before it can be safely bumped — do that
+      # migration deliberately, not via an auto-merged Dependabot PR.
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@typescript-eslint/*"
+        update-types: ["version-update:semver-major"]
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
@@ -49,9 +49,3 @@ updates:
       time: "09:00"
       timezone: "UTC"
     open-pull-requests-limit: 5
-    reviewers:
-      - "stellarbuild/devops"
-    labels:
-      - "dependencies"
-      - "github-actions"
-      - "automated"
