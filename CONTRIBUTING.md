@@ -22,7 +22,9 @@ Thank you for your interest in contributing to `stellar-tx-builder`. This guide 
 
 ## Code of Conduct
 
-This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold these standards. Please report unacceptable behaviour to **hello@stellarbuild.io**.
+This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold these standards. Please report unacceptable behaviour via the maintainer's
+[GitHub profile](https://github.com/T-kesh) or the repository's
+[Security tab](https://github.com/stellarbuild/stellar-tx-builder/security).
 
 ---
 

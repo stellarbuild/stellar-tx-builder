@@ -463,7 +463,7 @@ See [FAQ.md](FAQ.md) for answers to common questions.
 
 ## License
 
-[MIT](LICENSE) © [StellarBuild](https://stellarbuild.io)
+[MIT](LICENSE) © [StellarBuild](https://stellarbuild.io)[MIT](LICENSE) © [stellarbuild](https://github.com/stellarbuild)
 
 ---
 

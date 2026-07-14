@@ -58,8 +58,10 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behaviour may be
-reported to the community leaders responsible for enforcement at
-**hello@stellarbuild.io**.
+reported by opening a private security advisory via the
+[Security tab](https://github.com/stellarbuild/stellar-tx-builder/security),
+or by contacting the maintainer directly through their
+[GitHub profile](https://github.com/T-kesh).
 
 All complaints will be reviewed and investigated promptly and fairly.
 
